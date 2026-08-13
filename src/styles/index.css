@@ -1,0 +1,501 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+  color-scheme: light;
+
+  --bg-primary: #f4efe6;
+  --bg-secondary: rgba(255, 251, 244, 0.98);
+
+  --surface: rgba(255, 253, 249, 0.92);
+  --surface-hover: rgba(234, 125, 36, 0.08);
+
+  --text-primary: #302b26;
+  --text-secondary: #655d55;
+  --text-muted: #91867b;
+
+  --border: rgba(102, 82, 62, 0.14);
+
+  --accent: #e97824;
+  --accent-strong: #d76312;
+  --accent-soft: rgba(233, 120, 36, 0.11);
+
+  --danger: #d9534f;
+  --danger-soft: rgba(217, 83, 79, 0.12);
+
+  --topbar-bg: #fffbf4;
+  --sidebar-bg: #fffdf9;
+  --reminder-panel-bg: #fffbf4;
+
+  --calendar-card-bg: #fffdf9;
+  --calendar-grid-line: #e7ded5;
+  --calendar-day-text: #25201c;
+  --calendar-weekday-text: #8d8176;
+  --calendar-weekday-bg: #fff8f1;
+  --calendar-weekday-border: #eadfd4;
+  --calendar-month-text: #302b26;
+  --calendar-subtitle-text: #91867b;
+
+  --calendar-selected-bg: #fbe7d7;
+  --calendar-selected-text: #302b26;
+
+  --calendar-today-bg: #e97824;
+  --calendar-today-text: #ffffff;
+
+  --date-header-bg: #fff3e8;
+  --date-header-border: #e97824;
+  --date-header-text: #d76312;
+
+  --clock-bg: #fffdf9;
+  --clock-text: #e97824;
+
+  --reminder-pending: #e97824;
+  --reminder-partial: #3b82f6;
+  --reminder-done: #22c55e;
+
+  --converter-hijri: #16a34a;
+
+  --shadow:
+    0 12px 30px rgba(93, 70, 48, 0.08);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg-primary: #1c2027;
+  --bg-secondary: rgba(31, 36, 45, 0.98);
+
+  --surface: rgba(37, 43, 53, 0.94);
+  --surface-hover: rgba(51, 80, 128, 0.20);
+
+  --text-primary: #f2f4f7;
+  --text-secondary: #c4cad2;
+  --text-muted: #8e98a6;
+
+  --border: rgba(255, 255, 255, 0.09);
+
+  --accent: #4f74ad;
+  --accent-strong: #6f93ca;
+  --accent-soft: rgba(54, 82, 128, 0.28);
+
+  --danger: #ef6a67;
+  --danger-soft: rgba(239, 106, 103, 0.13);
+
+  --topbar-bg: #1f242d;
+  --sidebar-bg: #202631;
+  --reminder-panel-bg: #202631;
+
+  --calendar-card-bg: #252b35;
+  --calendar-grid-line: #39414d;
+  --calendar-day-text: #f2f4f7;
+  --calendar-weekday-text: #a8b2c1;
+  --calendar-weekday-bg: #232b36;
+  --calendar-weekday-border: #39414d;
+  --calendar-month-text: #f6f8fb;
+  --calendar-subtitle-text: #8e98a6;
+
+  --calendar-selected-bg: #2d4162;
+  --calendar-selected-text: #f2f4f7;
+
+  --calendar-today-bg: #4f74ad;
+  --calendar-today-text: #ffffff;
+
+  --date-header-bg: #25364f;
+  --date-header-border: #6f93ca;
+  --date-header-text: #b9cff0;
+
+  --clock-bg: #252b35;
+  --clock-text: #8fb1e1;
+
+  --reminder-pending: #6f93ca;
+  --reminder-partial: #60a5fa;
+  --reminder-done: #4ade80;
+
+  --converter-hijri: #4ade80;
+
+  --shadow:
+    0 14px 34px rgba(0, 0, 0, 0.26);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.35);
+  border-radius: 999px;
+}
+
+
+/* Electron frameless window */
+.app-drag {
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.app-no-drag,
+.app-no-drag * {
+  -webkit-app-region: no-drag;
+}
+
+
+/* ==========================================================
+   UI STYLE SYSTEM
+   الشكل منفصل تمامًا عن نظام الألوان.
+   classic = التصميم المتوازن
+   orbit   = بطاقات عائمة + Tiles
+   ledger  = واجهة أعمال كثيفة + Grid
+   ========================================================== */
+
+.app-shell,
+.ui-header,
+.ui-sidebar,
+.ui-reminder-panel,
+.ui-main,
+.ui-calendar-card,
+.ui-calendar-day,
+.ui-week-header,
+.ui-calendar-header {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    border-radius 180ms ease,
+    box-shadow 180ms ease,
+    margin 180ms ease,
+    padding 180ms ease,
+    width 180ms ease;
+}
+
+/* ---------- CLASSIC ---------- */
+.ui-style-classic .ui-body {
+  background: var(--bg-primary);
+}
+
+.ui-style-classic .ui-main {
+  background: var(--bg-primary);
+}
+
+.ui-style-classic .ui-calendar-card {
+  box-shadow: var(--shadow);
+}
+
+/* ---------- ORBIT ---------- */
+.ui-style-orbit .ui-header {
+  height: 62px !important;
+  margin: 10px 12px 0;
+  border: 1px solid var(--border) !important;
+  border-radius: 22px;
+  box-shadow:
+    0 10px 30px rgba(35, 65, 95, 0.08);
+}
+
+.ui-style-orbit .ui-body {
+  gap: 10px;
+  padding: 10px 12px 12px;
+  background:
+    radial-gradient(
+      circle at 48% -20%,
+      var(--accent-soft),
+      transparent 38%
+    ),
+    var(--bg-primary);
+}
+
+.ui-style-orbit .ui-sidebar {
+  width: 128px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 24px;
+  box-shadow:
+    0 10px 28px rgba(35, 65, 95, 0.07);
+}
+
+.ui-style-orbit .ui-sidebar nav {
+  display: grid;
+  gap: 7px;
+}
+
+.ui-style-orbit .ui-sidebar nav button {
+  min-height: 62px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px !important;
+  border-radius: 16px !important;
+  text-align: center;
+}
+
+.ui-style-orbit .ui-sidebar-settings,
+.ui-style-orbit .ui-sidebar-exit {
+  justify-content: center;
+  border-radius: 14px !important;
+}
+
+.ui-style-orbit .ui-reminder-panel {
+  width: 265px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 24px;
+  box-shadow:
+    0 10px 28px rgba(35, 65, 95, 0.07);
+}
+
+.ui-style-orbit .ui-main {
+  min-width: 660px !important;
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  background: var(--bg-secondary);
+  box-shadow:
+    0 14px 34px rgba(35, 65, 95, 0.08);
+}
+
+.ui-style-orbit .ui-calendar-page {
+  padding: 14px !important;
+}
+
+.ui-style-orbit .ui-calendar-top {
+  height: 70px !important;
+  margin-bottom: 10px !important;
+}
+
+.ui-style-orbit .ui-calendar-top > div {
+  border-radius: 18px !important;
+}
+
+.ui-style-orbit .ui-calendar-pair {
+  gap: 12px !important;
+}
+
+.ui-style-orbit .ui-calendar-card {
+  border-radius: 24px !important;
+  border-color: var(--border) !important;
+  box-shadow:
+    0 10px 28px rgba(35, 65, 95, 0.07);
+}
+
+.ui-style-orbit .ui-calendar-header {
+  border-bottom: 0 !important;
+  padding: 12px 14px 8px !important;
+}
+
+.ui-style-orbit .ui-calendar-header button {
+  border-radius: 12px !important;
+  background: var(--bg-secondary);
+}
+
+.ui-style-orbit .ui-week-header {
+  gap: 5px;
+  margin: 2px 8px 5px !important;
+  padding: 0;
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.ui-style-orbit .ui-weekday {
+  border: 1px solid var(--calendar-weekday-border) !important;
+  border-radius: 999px;
+  background: var(--calendar-weekday-bg);
+  padding: 7px 2px !important;
+}
+
+.ui-style-orbit .ui-calendar-grid-cells {
+  gap: 5px;
+  padding: 4px 7px 7px;
+}
+
+.ui-style-orbit .ui-calendar-day,
+.ui-style-orbit .ui-calendar-empty {
+  border: 1px solid var(--calendar-grid-line) !important;
+  border-radius: 13px;
+  background: var(--surface);
+}
+
+.ui-style-orbit .ui-calendar-empty {
+  opacity: 0.38;
+}
+
+.ui-style-orbit .ui-calendar-day:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 5px 13px rgba(35, 65, 95, 0.10);
+}
+
+/* ---------- LEDGER ---------- */
+.ui-style-ledger .ui-header {
+  height: 48px !important;
+  border-bottom: 0 !important;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.ui-style-ledger .ui-header > div:first-child > div:first-child {
+  border-radius: 4px !important;
+}
+
+.ui-style-ledger .ui-body {
+  background: var(--bg-primary);
+}
+
+.ui-style-ledger .ui-sidebar {
+  width: 190px !important;
+  border-left: 1px solid var(--border) !important;
+  border-radius: 0;
+  padding: 10px !important;
+}
+
+.ui-style-ledger .ui-sidebar nav {
+  border-top: 1px solid var(--border);
+}
+
+.ui-style-ledger .ui-sidebar nav button {
+  border-radius: 3px !important;
+  border-bottom: 1px solid var(--border);
+  padding-top: 9px !important;
+  padding-bottom: 9px !important;
+}
+
+.ui-style-ledger .ui-sidebar-settings,
+.ui-style-ledger .ui-sidebar-exit {
+  border-radius: 3px !important;
+}
+
+.ui-style-ledger .ui-reminder-panel {
+  width: 300px !important;
+  border-left: 1px solid var(--border) !important;
+  padding: 10px !important;
+}
+
+.ui-style-ledger .ui-reminder-panel * {
+  border-radius: 5px;
+}
+
+.ui-style-ledger .ui-main {
+  min-width: 680px !important;
+  border-radius: 0;
+  background: var(--bg-secondary);
+}
+
+.ui-style-ledger .ui-calendar-page {
+  padding: 10px !important;
+}
+
+.ui-style-ledger .ui-calendar-top {
+  height: 58px !important;
+  margin-bottom: 7px !important;
+}
+
+.ui-style-ledger .ui-calendar-top > div {
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+.ui-style-ledger .ui-calendar-pair {
+  gap: 8px !important;
+}
+
+.ui-style-ledger .ui-calendar-card {
+  border-radius: 5px !important;
+  box-shadow: none !important;
+}
+
+.ui-style-ledger .ui-calendar-header {
+  min-height: 58px;
+  border-bottom: 2px solid var(--calendar-grid-line) !important;
+  padding: 8px 12px !important;
+}
+
+.ui-style-ledger .ui-calendar-header button {
+  border: 1px solid var(--border);
+  border-radius: 3px !important;
+}
+
+.ui-style-ledger .ui-week-header {
+  margin: 0 !important;
+  border-width: 0 0 1px 0 !important;
+  border-radius: 0 !important;
+}
+
+.ui-style-ledger .ui-weekday {
+  border-radius: 0 !important;
+  padding: 7px 2px !important;
+  letter-spacing: 0;
+}
+
+.ui-style-ledger .ui-calendar-grid-cells {
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
+.ui-style-ledger .ui-calendar-day,
+.ui-style-ledger .ui-calendar-empty {
+  border-radius: 0 !important;
+  border-color: var(--calendar-grid-line) !important;
+}
+
+.ui-style-ledger .ui-calendar-day {
+  padding: 7px !important;
+}
+
+.ui-style-ledger .ui-calendar-day:hover {
+  box-shadow:
+    inset 3px 0 0 var(--accent);
+}
+
+/* Dark/Light Header text for Ledger */
+:root[data-ui-style='ledger'][data-theme='light']
+  .ui-header {
+  color: #ffffff;
+}
+
+:root[data-ui-style='ledger'][data-theme='light']
+  .ui-header [style*="var(--text-secondary)"],
+:root[data-ui-style='ledger'][data-theme='light']
+  .ui-header [style*="var(--text-muted)"] {
+  color: rgba(255,255,255,.84) !important;
+}
+
+/* Settings itself remains usable with all styles */
+.ui-style-orbit main:has(.rounded-2xl) {
+  background: var(--bg-primary);
+}

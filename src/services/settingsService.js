@@ -26,6 +26,7 @@ export const DEFAULT_COLOR_PALETTES = {
     dangerSoft: '#f9e3e2',
 
     topbarBg: '#fffbf4',
+    topbarText: '#302b26',
     sidebarBg: '#fffdf9',
     reminderPanelBg: '#fffbf4',
 
@@ -78,6 +79,7 @@ export const DEFAULT_COLOR_PALETTES = {
     dangerSoft: '#4a292c',
 
     topbarBg: '#1f242d',
+    topbarText: '#f2f4f7',
     sidebarBg: '#202631',
     reminderPanelBg: '#202631',
 
@@ -137,6 +139,7 @@ export const COLOR_PRESETS = {
       dangerSoft: '#f8e6e6',
 
       topbarBg: '#ffffff',
+      topbarText: '#10264a',
       sidebarBg: '#fbfcfe',
       reminderPanelBg: '#fbfcfe',
 
@@ -189,6 +192,7 @@ export const COLOR_PRESETS = {
       dangerSoft: '#48272d',
 
       topbarBg: '#101b2b',
+      topbarText: '#eef4fb',
       sidebarBg: '#111d2e',
       reminderPanelBg: '#111d2e',
 
@@ -272,6 +276,7 @@ export const UI_STYLE_PRESETS = {
       dangerSoft: '#f8e8ea',
 
       topbarBg: '#f9fbfd',
+      topbarText: '#15385f',
       sidebarBg: '#f9fbfd',
       reminderPanelBg: '#f9fbfd',
 
@@ -323,6 +328,7 @@ export const UI_STYLE_PRESETS = {
       dangerSoft: '#482a31',
 
       topbarBg: '#111e2f',
+      topbarText: '#edf4fb',
       sidebarBg: '#122033',
       reminderPanelBg: '#122033',
 
@@ -383,6 +389,7 @@ export const UI_STYLE_PRESETS = {
       dangerSoft: '#f6e5e7',
 
       topbarBg: '#163046',
+      topbarText: '#ffffff',
       sidebarBg: '#f2f5f7',
       reminderPanelBg: '#f7f9fa',
 
@@ -434,6 +441,7 @@ export const UI_STYLE_PRESETS = {
       dangerSoft: '#452a2e',
 
       topbarBg: '#142b3b',
+      topbarText: '#eef3f5',
       sidebarBg: '#172128',
       reminderPanelBg: '#172128',
 
@@ -514,6 +522,7 @@ export const COLOR_VARIABLE_MAP = {
   dangerSoft: '--danger-soft',
 
   topbarBg: '--topbar-bg',
+  topbarText: '--topbar-text',
   sidebarBg: '--sidebar-bg',
   reminderPanelBg: '--reminder-panel-bg',
 
@@ -554,6 +563,13 @@ export const DEFAULT_SETTINGS = {
   visualStyle: 'classic',
 
   hijriAdjustment: 0,
+
+  /*
+   * ترتيب لوحتي التقويم:
+   * false = الهجري يمين / الميلادي يسار (الوضع الحالي)
+   * true  = الميلادي يمين / الهجري يسار
+   */
+  reverseCalendarOrder: false,
 
   timeFormat: '24',
 
@@ -988,6 +1004,10 @@ export function generateSmartPalette(
 
       topbarBg:
         bgSecondary,
+      topbarText:
+        readableTextColor(
+          bgSecondary
+        ),
       sidebarBg:
         mixColors(
           bgSecondary,
@@ -1163,6 +1183,10 @@ export function generateSmartPalette(
 
     topbarBg:
       '#ffffff',
+    topbarText:
+      readableTextColor(
+        '#ffffff'
+      ),
     sidebarBg:
       mixColors(
         base,

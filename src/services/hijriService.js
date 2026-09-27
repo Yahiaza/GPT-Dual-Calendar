@@ -81,9 +81,27 @@ export function getHijriMonthDays(
     );
 
   const daysInMonth =
-    firstHijriDay.iDaysInMonth();
+    firstHijriDay
+      .clone()
+      .endOf('iMonth')
+      .iDate();
 
   const result = [];
+
+  const offset =
+    (
+      firstHijriDay.day() -
+      6 +
+      7
+    ) % 7;
+
+  for (
+    let index = 0;
+    index < offset;
+    index += 1
+  ) {
+    result.push(null);
+  }
 
   for (
     let day = 1;

@@ -28,6 +28,7 @@
   --danger-soft: rgba(217, 83, 79, 0.12);
 
   --topbar-bg: #fffbf4;
+  --topbar-text: #302b26;
   --sidebar-bg: #fffdf9;
   --reminder-panel-bg: #fffbf4;
 
@@ -86,6 +87,7 @@
   --danger-soft: rgba(239, 106, 103, 0.13);
 
   --topbar-bg: #1f242d;
+  --topbar-text: #f2f4f7;
   --sidebar-bg: #202631;
   --reminder-panel-bg: #202631;
 
@@ -365,7 +367,6 @@ button {
 .ui-style-ledger .ui-header {
   height: 48px !important;
   border-bottom: 0 !important;
-  color: #ffffff;
   box-shadow: none;
 }
 
@@ -480,19 +481,6 @@ button {
 .ui-style-ledger .ui-calendar-day:hover {
   box-shadow:
     inset 3px 0 0 var(--accent);
-}
-
-/* Dark/Light Header text for Ledger */
-:root[data-ui-style='ledger'][data-theme='light']
-  .ui-header {
-  color: #ffffff;
-}
-
-:root[data-ui-style='ledger'][data-theme='light']
-  .ui-header [style*="var(--text-secondary)"],
-:root[data-ui-style='ledger'][data-theme='light']
-  .ui-header [style*="var(--text-muted)"] {
-  color: rgba(255,255,255,.84) !important;
 }
 
 /* Settings itself remains usable with all styles */

@@ -1,6 +1,7 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 
@@ -18,7 +19,6 @@ import HijriCalendarGrid from './HijriCalendarGrid';
 
 import {
   getGregorianDays,
-  getGregorianWeekHeaderStart,
   getToday
 } from '../../services/calendarService';
 
@@ -66,12 +66,24 @@ export default function Calendar({
   exceptions = [],
   completed = [],
   numberStyle = 'western',
+  reverseCalendarOrder = false,
   onSelectedDateChange
 }) {
-  const today =
-    useMemo(
-      () => getToday(),
-      []
+  /*
+   * "today" كان قبل كده بيتحسب مرة واحدة فقط عند فتح التطبيق.
+   * لذلك لو التطبيق فضل مفتوح بعد منتصف الليل، اليوم الحالي
+   * كان يظل يوم أمس. نخليه State ويتحدث عند تغيّر تاريخ النظام.
+   */
+  const [
+    today,
+    setToday
+  ] = useState(
+    () => getToday()
+  );
+
+  const lastTodayRef =
+    useRef(
+      today.clone()
     );
 
   const [
@@ -82,19 +94,72 @@ export default function Calendar({
   );
 
   useEffect(() => {
+    const refreshSystemTime =
+      () => {
+        setLiveClock(
+          new Date()
+        );
+
+        const nextToday =
+          getToday();
+
+        setToday(
+          currentToday =>
+            currentToday.isSame(
+              nextToday,
+              'day'
+            )
+              ? currentToday
+              : nextToday
+        );
+      };
+
+    /*
+     * فحص كل ثانية يخدم الساعة الحالية أيضًا.
+     * بعد Sleep / Resume أول Tick يعيد قراءة تاريخ Windows
+     * فيصحح اليوم فورًا بدون إعادة تشغيل التطبيق.
+     */
     const timer =
       setInterval(
-        () =>
-          setLiveClock(
-            new Date()
-          ),
+        refreshSystemTime,
         1000
       );
 
-    return () =>
+    const handleVisibilityChange =
+      () => {
+        if (
+          document.visibilityState ===
+          'visible'
+        ) {
+          refreshSystemTime();
+        }
+      };
+
+    window.addEventListener(
+      'focus',
+      refreshSystemTime
+    );
+
+    document.addEventListener(
+      'visibilitychange',
+      handleVisibilityChange
+    );
+
+    return () => {
       clearInterval(
         timer
       );
+
+      window.removeEventListener(
+        'focus',
+        refreshSystemTime
+      );
+
+      document.removeEventListener(
+        'visibilitychange',
+        handleVisibilityChange
+      );
+    };
   }, []);
 
   const liveClockText =
@@ -208,22 +273,7 @@ export default function Calendar({
       () =>
         getGregorianDays(
           gregorianView.year(),
-          gregorianView.month(),
-          6,
-          false
-        ),
-      [
-        gregorianView
-      ]
-    );
-
-  const gregorianWeekdayStartIndex =
-    useMemo(
-      () =>
-        getGregorianWeekHeaderStart(
-          gregorianView.year(),
-          gregorianView.month(),
-          6
+          gregorianView.month()
         ),
       [
         gregorianView
@@ -330,6 +380,66 @@ export default function Calendar({
           hijri.month
       });
     };
+
+  /*
+   * الانتقال التلقائي لليوم الجديد:
+   *
+   * - لو المستخدم كان واقف على "اليوم الفعلي" وقت دخول منتصف الليل،
+   *   ننقله تلقائيًا لليوم الجديد ونزامن الميلادي والهجري والـSidebar.
+   *
+   * - لو المستخدم كان يتصفح تاريخًا قديمًا/مستقبليًا بنفسه،
+   *   لا نسحبه فجأة إلى اليوم الحالي.
+   */
+  useEffect(() => {
+    const previousToday =
+      lastTodayRef.current;
+
+    if (
+      previousToday.isSame(
+        today,
+        'day'
+      )
+    ) {
+      return;
+    }
+
+    const wasFollowingToday =
+      selectedDate.isSame(
+        previousToday,
+        'day'
+      );
+
+    lastTodayRef.current =
+      today.clone();
+
+    if (
+      !wasFollowingToday
+    ) {
+      return;
+    }
+
+    const next =
+      today.clone();
+
+    setSelectedDate(
+      next
+    );
+
+    if (
+      typeof onSelectedDateChange ===
+      'function'
+    ) {
+      onSelectedDateChange(
+        next.clone()
+      );
+    }
+
+    syncViewsToDate(
+      next
+    );
+  }, [
+    today
+  ]);
 
   const handleSelect =
     date => {
@@ -691,6 +801,14 @@ export default function Calendar({
                     <section
                       className="ui-calendar-card flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border"
                       style={{
+                        /*
+                         * في RTL أول عنصر Grid يظهر يمينًا.
+                         * عند عكس الترتيب نرسل الهجري للمكان الثاني.
+                         */
+                        order:
+                          reverseCalendarOrder
+                            ? 2
+                            : 1,
                         background:
                           'var(--surface)',
                         borderColor:
@@ -762,10 +880,23 @@ export default function Calendar({
         <section
           className="ui-calendar-card flex min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border"
           style={{
+            /*
+             * false: الميلادي يسار (الوضع الحالي)
+             * true : الميلادي يمين
+             */
+            order:
+              reverseCalendarOrder
+                ? 1
+                : 2,
             background:
               'var(--calendar-card-bg)',
+            /*
+             * الإطار الخارجي للكارت يجب أن يتبع لون "الحدود"
+             * من إعدادات الثيم، مثل كارت التقويم الهجري وباقي الواجهة.
+             * calendarGridLine مخصص لخطوط الشبكة الداخلية فقط.
+             */
             borderColor:
-              'var(--calendar-grid-line)',
+              'var(--border)',
             boxShadow:
               'var(--shadow)'
           }}
@@ -801,9 +932,6 @@ export default function Calendar({
             <CalendarGrid
               days={
                 gregorianDays
-              }
-              weekdayStartIndex={
-                gregorianWeekdayStartIndex
               }
               selectedDate={
                 selectedDate

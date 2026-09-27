@@ -36,7 +36,9 @@ export default function Header({
         background:
           'var(--topbar-bg)',
         borderColor:
-          'var(--border)'
+          'var(--border)',
+        color:
+          'var(--topbar-text)'
       }}
     >
       {/* اسم التطبيق */}
@@ -65,7 +67,8 @@ export default function Header({
             className="text-[9px]"
             style={{
               color:
-                'var(--text-muted)'
+                'var(--topbar-text)',
+              opacity: 0.72
             }}
           >
             تقويم ميلادي وهجري
@@ -84,7 +87,7 @@ export default function Header({
           className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
           style={{
             color:
-              'var(--text-secondary)'
+              'var(--topbar-text)'
           }}
           title="تغيير الثيم"
         >
@@ -112,7 +115,7 @@ export default function Header({
           className="flex h-8 w-9 items-center justify-center rounded-lg transition-colors hover:bg-black/5"
           style={{
             color:
-              'var(--text-secondary)'
+              'var(--topbar-text)'
           }}
           title="تصغير"
         >
@@ -129,7 +132,7 @@ export default function Header({
           className="flex h-8 w-9 items-center justify-center rounded-lg transition-colors hover:bg-black/5"
           style={{
             color:
-              'var(--text-secondary)'
+              'var(--topbar-text)'
           }}
           title="تكبير / استعادة"
         >
@@ -146,7 +149,7 @@ export default function Header({
           className="flex h-8 w-9 items-center justify-center rounded-lg transition-colors hover:bg-red-500 hover:text-white"
           style={{
             color:
-              'var(--text-secondary)'
+              'var(--topbar-text)'
           }}
           title="إغلاق إلى شريط النظام"
         >

@@ -8,27 +8,7 @@ const WEEK_DAYS = [
   'الجمعة'
 ];
 
-export default function WeekHeader({
-  startIndex = 0
-}) {
-  const normalizedStart =
-    (
-      Number(
-        startIndex
-      ) % 7 +
-      7
-    ) % 7;
-
-  const orderedDays = [
-    ...WEEK_DAYS.slice(
-      normalizedStart
-    ),
-    ...WEEK_DAYS.slice(
-      0,
-      normalizedStart
-    )
-  ];
-
+export default function WeekHeader() {
   return (
     <div
       dir="rtl"
@@ -40,7 +20,7 @@ export default function WeekHeader({
           'var(--calendar-weekday-border)'
       }}
     >
-      {orderedDays.map(
+      {WEEK_DAYS.map(
         day => (
           <div
             key={day}

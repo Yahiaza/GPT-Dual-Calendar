@@ -792,6 +792,30 @@ export default function SettingsView({
               }
             >
               <Row
+                title="عكس ترتيب التقويم"
+                description={
+                  settings.reverseCalendarOrder
+                    ? 'الميلادي يمين والهجري يسار'
+                    : 'الهجري يمين والميلادي يسار'
+                }
+              >
+                <Toggle
+                  checked={
+                    Boolean(
+                      settings.reverseCalendarOrder
+                    )
+                  }
+                  onChange={
+                    value =>
+                      set(
+                        'reverseCalendarOrder',
+                        value
+                      )
+                  }
+                />
+              </Row>
+
+              <Row
                 title="ضبط التاريخ الهجري"
                 description="القيمة الافتراضية المستخدمة في العرض والتحويل"
               >

@@ -4,7 +4,7 @@ export function getGregorianDays(
   year,
   month,
   weekStartsOn = 6,
-  includeLeadingGaps = false
+  includeLeadingGaps = true
 ) {
   const firstDay =
     moment({
@@ -55,25 +55,6 @@ export function getGregorianDays(
   }
 
   return days;
-}
-
-export function getGregorianWeekHeaderStart(
-  year,
-  month,
-  weekStartsOn = 6
-) {
-  const firstWeekday =
-    moment({
-      year,
-      month,
-      day: 1
-    }).day();
-
-  return (
-    firstWeekday -
-    weekStartsOn +
-    7
-  ) % 7;
 }
 
 export function getToday() {

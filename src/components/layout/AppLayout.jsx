@@ -730,6 +730,11 @@ export default function AppLayout({
               numberStyle={
                 settings.numberStyle
               }
+              reverseCalendarOrder={
+                Boolean(
+                  settings.reverseCalendarOrder
+                )
+              }
               onSelectedDateChange={
                 setSelectedDate
               }

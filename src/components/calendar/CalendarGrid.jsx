@@ -3,7 +3,6 @@ import WeekHeader from './WeekHeader';
 
 export default function CalendarGrid({
   days,
-  weekdayStartIndex = 0,
   selectedDate,
   today,
   reminders = [],
@@ -29,11 +28,7 @@ export default function CalendarGrid({
   return (
     <div className="ui-calendar-grid flex h-full min-h-0 w-full flex-col">
       <div className="shrink-0">
-        <WeekHeader
-          startIndex={
-            weekdayStartIndex
-          }
-        />
+        <WeekHeader />
       </div>
 
       <div

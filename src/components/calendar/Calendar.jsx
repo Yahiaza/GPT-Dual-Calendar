@@ -18,6 +18,7 @@ import CalendarGrid from './CalendarGrid';
 import HijriCalendarGrid from './HijriCalendarGrid';
 
 import {
+  formatCalendarMonthTitle,
   getGregorianDays,
   getToday
 } from '../../services/calendarService';
@@ -296,20 +297,33 @@ export default function Calendar({
     );
 
   const gregorianTitle =
-    `${ARABIC_MONTHS[
-      gregorianView.month()
-    ]} ${formatAppNumber(
-      gregorianView.year(),
+    formatCalendarMonthTitle({
+      monthName:
+        ARABIC_MONTHS[
+          gregorianView.month()
+        ],
+      monthNumber:
+        gregorianView.month() +
+        1,
+      year:
+        gregorianView.year(),
+      era: 'م',
       numberStyle
-    )}`;
+    });
 
   const hijriTitle =
-    `${HIJRI_MONTHS[
-      hijriView.month - 1
-    ]} ${formatAppNumber(
-      hijriView.year,
+    formatCalendarMonthTitle({
+      monthName:
+        HIJRI_MONTHS[
+          hijriView.month - 1
+        ],
+      monthNumber:
+        hijriView.month,
+      year:
+        hijriView.year,
+      era: 'هـ',
       numberStyle
-    )} هـ`;
+    });
 
   const centerWeekdayText =
     ARABIC_WEEKDAYS[

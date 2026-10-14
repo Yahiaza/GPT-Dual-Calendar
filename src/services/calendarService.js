@@ -1,5 +1,33 @@
 import moment from 'moment';
 
+import {
+  formatAppNumber
+} from './settingsService.js';
+
+export function formatCalendarMonthTitle({
+  monthName,
+  monthNumber,
+  year,
+  era,
+  numberStyle = 'western'
+}) {
+  const paddedMonth =
+    String(
+      monthNumber
+    ).padStart(
+      2,
+      '0'
+    );
+
+  return `${monthName} [${formatAppNumber(
+    paddedMonth,
+    numberStyle
+  )}] ${formatAppNumber(
+    year,
+    numberStyle
+  )} ${era}`;
+}
+
 export function getGregorianDays(
   year,
   month,

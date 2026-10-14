@@ -456,7 +456,7 @@ export default function Calendar({
   ]);
 
   const handleSelect =
-    date => {
+    (date, calendar = 'gregorian') => {
       if (!date) {
         return;
       }
@@ -473,7 +473,8 @@ export default function Calendar({
         'function'
       ) {
         onSelectedDateChange(
-          next.clone()
+          next.clone(),
+          calendar
         );
       }
 

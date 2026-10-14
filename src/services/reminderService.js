@@ -1,4 +1,5 @@
 import moment from 'moment';
+import hijriMoment from 'moment-hijri';
 
 export const RECURRENCE_TYPES = {
   NONE: 'none',
@@ -70,7 +71,9 @@ export function createReminder({
   recurrenceEndType =
     RECURRENCE_END_TYPES.NEVER,
   recurrenceEndDate = null,
-  recurrenceCount = null
+  recurrenceCount = null,
+  recurrenceCalendar = 'gregorian',
+  hijriAdjustment = 0
 }) {
   const isRecurring =
     recurrenceType !==
@@ -107,6 +110,8 @@ export function createReminder({
         time
       ),
     recurrence: {
+      calendar: recurrenceCalendar === 'hijri' ? 'hijri' : 'gregorian',
+      hijriAdjustment: Number(hijriAdjustment) || 0,
       type:
         recurrenceType,
       interval:
@@ -212,7 +217,9 @@ export function validateReminder(
 
 function addRecurrence(
   date,
-  recurrence
+  recurrence,
+  firstDate,
+  occurrenceIndex
 ) {
   const result =
     moment(date);
@@ -223,6 +230,21 @@ function addRecurrence(
       recurrence
         ?.interval || 1
     );
+
+  if (
+    recurrence?.calendar === 'hijri' &&
+    [RECURRENCE_TYPES.MONTHLY, RECURRENCE_TYPES.YEARLY].includes(recurrence.type)
+  ) {
+    const adjustment = Number(recurrence.hijriAdjustment) || 0;
+    const anchor = hijriMoment(firstDate.toDate()).add(adjustment, 'days');
+    const target = anchor.clone().iDate(1).add(
+      occurrenceIndex * interval,
+      recurrence.type === RECURRENCE_TYPES.MONTHLY ? 'iMonth' : 'iYear'
+    );
+    const lastDay = target.clone().endOf('iMonth').iDate();
+    target.iDate(Math.min(anchor.iDate(), lastDay)).subtract(adjustment, 'days');
+    return moment(target.toDate()).locale(firstDate.locale());
+  }
 
   switch (
     recurrence?.type
@@ -423,7 +445,9 @@ export function generateReminderOccurrences(
     const nextDate =
       addRecurrence(
         currentDate.clone(),
-        recurrence
+        recurrence,
+        firstDate,
+        occurrenceIndex
       );
 
     if (

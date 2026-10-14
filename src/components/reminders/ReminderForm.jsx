@@ -4,6 +4,9 @@ import {
   useState
 } from 'react';
 
+import moment from 'moment';
+import hijriMoment from 'moment-hijri';
+
 import {
   Bell,
   CalendarDays,
@@ -70,12 +73,16 @@ export default function ReminderForm({
   onSave,
   selectedDate,
   editingReminder = null,
+  calendar = 'gregorian',
+  hijriAdjustment = 0,
   defaultTime = '09:00',
   numberStyle = 'western',
   timeFormat = '24'
 }) {
   const timePickerRef =
     useRef(null);
+
+  const [recurrenceCalendar, setRecurrenceCalendar] = useState('gregorian');
 
   const [
     title,
@@ -141,6 +148,7 @@ export default function ReminderForm({
     if (
       editingReminder
     ) {
+      setRecurrenceCalendar(editingReminder.recurrence?.calendar || 'gregorian');
       setTitle(
         editingReminder.title ||
         ''
@@ -192,6 +200,7 @@ export default function ReminderForm({
           ?.count || 5
       );
     } else {
+      setRecurrenceCalendar(calendar);
       setTitle('');
       setNotes('');
 
@@ -234,7 +243,8 @@ export default function ReminderForm({
     isOpen,
     selectedDate,
     editingReminder,
-    defaultTime
+    defaultTime,
+    calendar
   ]);
 
   useEffect(() => {
@@ -283,6 +293,8 @@ export default function ReminderForm({
           time,
           recurrenceType,
           recurrenceInterval,
+          recurrenceCalendar,
+          hijriAdjustment: editingReminder?.recurrence?.hijriAdjustment ?? hijriAdjustment,
           recurrenceEndType,
           recurrenceEndDate:
             recurrenceEndType ===
@@ -547,6 +559,32 @@ export default function ReminderForm({
               <Repeat size={15} />
               التكرار
             </div>
+
+            <label className="mb-3 block text-xs font-bold">
+              التقويم المستخدم للتكرار الشهري والسنوي
+              <select
+                aria-label="التقويم المستخدم للتكرار"
+                value={recurrenceCalendar}
+                onChange={event => setRecurrenceCalendar(event.target.value)}
+                className="mt-2 w-full rounded-xl border px-3 py-2.5 text-sm"
+                style={inputStyle}
+              >
+                <option value="gregorian">ميلادي</option>
+                <option value="hijri">هجري</option>
+              </select>
+            </label>
+
+            {recurrenceCalendar === 'hijri' && date && (
+              <p className="mb-3 text-xs" style={{ color: 'var(--text-secondary)' }}>
+                التاريخ الهجري للتذكير: {formatAppNumber(
+                  hijriMoment(moment(date).toDate()).add(
+                    editingReminder?.recurrence?.hijriAdjustment ?? hijriAdjustment,
+                    'days'
+                  ).locale('en').format('iDD/iMM/iYYYY'),
+                  numberStyle
+                )} هـ — التكرار الشهري والسنوي يتبع هذا التاريخ الهجري.
+              </p>
+            )}
 
             <div className="grid grid-cols-2 gap-3">
               <select

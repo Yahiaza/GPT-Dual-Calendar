@@ -132,6 +132,9 @@ export default function ReminderDetailsModal({
               ] ||
               'بدون تكرار'
             }
+            {['monthly', 'yearly'].includes(source?.recurrence?.type) && (
+              <span>({source?.recurrence?.calendar === 'hijri' ? 'هجري' : 'ميلادي'})</span>
+            )}
           </div>
 
           {occurrence.notes && (

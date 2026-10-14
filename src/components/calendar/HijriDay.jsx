@@ -224,7 +224,8 @@ export default function HijriDay({
         type="button"
         onClick={() =>
           onSelect(
-            data.gregorian.clone()
+            data.gregorian.clone(),
+            'hijri'
           )
         }
         onContextMenu={
@@ -233,7 +234,8 @@ export default function HijriDay({
 
             onContextMenu(
               event,
-              data.gregorian.clone()
+              data.gregorian.clone(),
+              'hijri'
             );
           }
         }

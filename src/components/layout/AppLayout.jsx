@@ -102,6 +102,9 @@ export default function AppLayout({
     setReminderDate
   ] = useState(null);
 
+  const [reminderCalendar, setReminderCalendar] = useState('gregorian');
+  const [selectedCalendar, setSelectedCalendar] = useState('gregorian');
+
   const [
     editingReminder,
     setEditingReminder
@@ -368,13 +371,15 @@ export default function AppLayout({
   const handleContextMenu =
     (
       event,
-      date
+      date,
+      calendar = 'gregorian'
     ) => {
       event.preventDefault();
 
       setSelectedDate(
         date.clone()
       );
+      setSelectedCalendar(calendar);
 
       setContextMenu({
         x:
@@ -382,12 +387,13 @@ export default function AppLayout({
         y:
           event.clientY,
         date:
-          date.clone()
+          date.clone(),
+        calendar
       });
     };
 
   const openAddReminder =
-    date => {
+    (date, calendar = 'gregorian') => {
       const target =
         date?.clone
           ? date.clone()
@@ -400,6 +406,8 @@ export default function AppLayout({
       setReminderDate(
         target
       );
+
+      setReminderCalendar(calendar);
 
       setReminderFormOpen(
         true
@@ -664,7 +672,7 @@ export default function AppLayout({
             hijriAdjustment
           }
           onAddReminder={
-            openAddReminder
+            date => openAddReminder(date, selectedCalendar)
           }
           onOpenReminder={
             openDetails
@@ -736,7 +744,10 @@ export default function AppLayout({
                 )
               }
               onSelectedDateChange={
-                setSelectedDate
+                (date, calendar = 'gregorian') => {
+                  setSelectedDate(date);
+                  setSelectedCalendar(calendar);
+                }
               }
             />
           )}
@@ -901,7 +912,8 @@ export default function AppLayout({
             type="button"
             onClick={() =>
               openAddReminder(
-                contextMenu.date
+                contextMenu.date,
+                contextMenu.calendar
               )
             }
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-right text-xs font-semibold"
@@ -981,6 +993,8 @@ export default function AppLayout({
       )}
 
       <ReminderForm
+        calendar={reminderCalendar}
+        hijriAdjustment={hijriAdjustment}
         isOpen={
           reminderFormOpen
         }
